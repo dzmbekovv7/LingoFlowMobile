@@ -1,0 +1,2 @@
+D:/IT-Projects/Flutter/lingoo/android/app/.cxx/Debug/435j4v27/x86/CMakeFiles/edit_cache.dir
+D:/IT-Projects/Flutter/lingoo/android/app/.cxx/Debug/435j4v27/x86/CMakeFiles/rebuild_cache.dir
