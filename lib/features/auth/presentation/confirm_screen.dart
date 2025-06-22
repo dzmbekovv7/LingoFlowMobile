@@ -1,7 +1,10 @@
+// lib/features/auth/presentation/confirm_screen.dart
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lingoo/shared/widgets/auth_form_wrapper.dart';
+import 'package:lingoo/shared/widgets/form_input.dart';
 
 class ConfirmScreen extends StatefulWidget {
   const ConfirmScreen({super.key});
@@ -25,7 +28,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
       final token = res.data['token'];
 
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('auth_token', token);
+      await prefs.setString('token', token);
 
       if (!mounted) return;
       context.go('/home');
@@ -36,32 +39,34 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Confirm Code')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-            ),
-            TextField(
-              controller: codeController,
-              decoration: const InputDecoration(labelText: 'Code'),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: confirm,
-              child: const Text('Confirm'),
-            ),
-            if (error.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: Text(error, style: const TextStyle(color: Colors.red)),
+    return AuthFormWrapper(
+      title: 'Confirm Account',
+      child: Column(
+        children: [
+          buildTextField(emailController, 'Email', Icons.email),
+          const SizedBox(height: 10),
+          buildTextField(codeController, 'Code', Icons.verified),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
+              backgroundColor: Colors.deepPurple,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-          ],
-        ),
+            ),
+            onPressed: confirm,
+            child: const Text(
+              'Confirm',
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
+          if (error.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: Text(error, style: const TextStyle(color: Colors.red)),
+            ),
+        ],
       ),
     );
   }

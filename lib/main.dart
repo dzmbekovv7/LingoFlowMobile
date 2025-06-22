@@ -1,8 +1,16 @@
+// main.dart
 import 'package:flutter/material.dart';
-import 'app/router.dart';
+import 'package:provider/provider.dart'; // ✅ ADD THIS
+import 'core/services/auth_provider.dart'; // ✅ Your AuthProvider
+import 'app/router.dart'; // ✅ GoRouter config
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => AuthProvider()..checkAuthStatus(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

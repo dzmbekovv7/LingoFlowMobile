@@ -1,14 +1,36 @@
-// // lib/features/auth/domain/auth_provider.dart
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import '../data/auth_api.dart';
+// import 'package:flutter/material.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 //
-// final authApiProvider = Provider((ref) => AuthApi());
+// class AuthProvider extends ChangeNotifier {
+//   String? _token;
+//   bool _isLoading = true;
 //
-// final registerProvider = FutureProvider.family<void, Map<String, String>>((ref, data) {
-//   final api = ref.read(authApiProvider);
-//   return api.register(
-//     email: data['email']!,
-//     password: data['password']!,
-//     username: data['username']!,
-//   );
-// });
+//   bool get isAuthenticated => _token != null;
+//   bool get isLoading => _isLoading;
+//
+//   AuthProvider() {
+//     _loadToken(); // загружаем токен при старте
+//   }
+//
+//   Future<void> _loadToken() async {
+//     final prefs = await SharedPreferences.getInstance();
+//     _token = prefs.getString('token');
+//     _isLoading = false;
+//     notifyListeners();
+//   }
+//
+//
+//   Future<void> login(String token) async {
+//     final prefs = await SharedPreferences.getInstance();
+//     await prefs.setString('token', token);
+//     _token = token;
+//     notifyListeners();
+//   }
+//
+//   Future<void> logout() async {
+//     final prefs = await SharedPreferences.getInstance();
+//     await prefs.remove('token');
+//     _token = null;
+//     notifyListeners();
+//   }
+// }

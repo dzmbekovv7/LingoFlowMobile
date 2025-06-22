@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lingoo/shared/widgets/auth_form_wrapper.dart';
+import 'package:lingoo/shared/widgets/form_input.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -15,8 +17,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordConfirmController = TextEditingController();
   final _nameController = TextEditingController();
 
-  bool success = false;
-
   void register() async {
     try {
       final response = await Dio().post(
@@ -28,51 +28,80 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'name': _nameController.text,
         },
       );
-      print('Server response: ${response.statusCode} - ${response.data}');
-
       if (context.mounted) {
-        context.go('/confirm'); // или context.push('/confirm')
-
+        context.go('/confirm');
       }
     } catch (e) {
       print("Registration failed: $e");
     }
   }
 
-
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _passwordConfirmController.dispose();
+    _nameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: success
-          ? const Center(child: Text('Check your email to confirm.'))
-          : Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
+    return AuthFormWrapper(
+      title: 'LanguaFlow',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          buildTextField(_nameController, 'Name', Icons.person),
+          const SizedBox(height: 12),
+          buildTextField(_emailController, 'Email', Icons.email),
+          const SizedBox(height: 12),
+          buildTextField(_passwordController, 'Password', Icons.lock, isObscure: true),
+          const SizedBox(height: 12),
+          buildTextField(_passwordConfirmController, 'Confirm Password', Icons.lock_outline, isObscure: true),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+              backgroundColor: Colors.deepPurple,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
             ),
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Name'),
+            onPressed: register,
+            child: const Text(
+              'Register',
+              style: TextStyle(fontSize: 18, color: Colors.white),
             ),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(labelText: 'Password'),
-            ),
-            TextField(
-              controller: _passwordConfirmController,
-              obscureText: true,
-              decoration: const InputDecoration(labelText: 'Confirm Password'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(onPressed: register, child: const Text('Register')),
-          ],
-        ),
+          ),
+          const SizedBox(height: 30),
+
+          // ✅ Навигационные кнопки снизу
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton(
+                onPressed: () {
+                  context.go('/login');
+                },
+                child: const Text(
+                  'Already have an account?',
+                  style: TextStyle(color: Colors.deepPurple, fontSize: 14),
+                ),
+              ),
+              const SizedBox(width: 8),
+              TextButton(
+                onPressed: () {
+                  context.go('/forgot-password');
+                },
+                child: const Text(
+                  'Forgot password?',
+                  style: TextStyle(color: Colors.redAccent, fontSize: 14),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
