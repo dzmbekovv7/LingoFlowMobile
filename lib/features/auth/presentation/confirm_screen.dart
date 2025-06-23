@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lingoo/shared/widgets/auth_form_wrapper.dart';
 import 'package:lingoo/shared/widgets/form_input.dart';
+import 'package:jwt_decoder/jwt_decoder.dart'; // ✅ NEW
 
 class ConfirmScreen extends StatefulWidget {
   const ConfirmScreen({super.key});
@@ -31,11 +32,19 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
       await prefs.setString('token', token);
 
       if (!mounted) return;
-      context.go('/home');
+
+      final decodedToken = JwtDecoder.decode(token);
+      final userId = decodedToken['sub'] as String? ?? '';
+
+      context.go('/userInfo', extra: {
+        'userId': userId,
+        'token': token,
+      });
     } catch (e) {
       setState(() => error = 'Invalid code or email');
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

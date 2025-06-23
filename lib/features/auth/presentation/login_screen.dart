@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lingoo/shared/widgets/auth_form_wrapper.dart';
 import 'package:lingoo/shared/widgets/form_input.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget{
   const LoginScreen({super.key});
@@ -26,6 +27,9 @@ class _LoginScreenState extends State<LoginScreen>{
           'password': _passwordController.text
         },
       );
+      final token = response.data['token'];
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', token);
       if(context.mounted){
         context.go("/home");
       }
