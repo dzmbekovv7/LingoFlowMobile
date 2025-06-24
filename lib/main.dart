@@ -1,20 +1,28 @@
-// main.dart
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'; // ✅ ADD THIS
-import 'core/services/auth_provider.dart'; // ✅ Your AuthProvider
-import 'app/router.dart'; // ✅ GoRouter config
+import 'package:provider/provider.dart';
+import 'core/services/auth_provider.dart';
+import 'app/router.dart'; // createRouter
+import 'package:go_router/go_router.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final authProvider = AuthProvider();
+  await authProvider.checkAuthStatus();
+
+  final router = createRouter(authProvider); // ✅ Передаём уже проверенный провайдер
+
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => AuthProvider()..checkAuthStatus(),
-      child: const MyApp(),
+    ChangeNotifierProvider<AuthProvider>.value(
+      value: authProvider,
+      child: MyApp(router: router),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final GoRouter router;
+  const MyApp({super.key, required this.router});
 
   @override
   Widget build(BuildContext context) {

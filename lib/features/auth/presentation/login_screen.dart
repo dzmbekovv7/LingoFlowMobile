@@ -4,7 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:lingoo/shared/widgets/auth_form_wrapper.dart';
 import 'package:lingoo/shared/widgets/form_input.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:provider/provider.dart';
+import '../../../core/services/auth_provider.dart';
 class LoginScreen extends StatefulWidget{
   const LoginScreen({super.key});
 
@@ -18,23 +19,26 @@ class _LoginScreenState extends State<LoginScreen>{
   final _passwordController = TextEditingController();
 
 
-  void login() async{
-    try{
+  void login() async {
+    try {
       final response = await Dio().post(
         'http://192.168.56.1:3333/users/login',
         data: {
           'email': _emailController.text,
-          'password': _passwordController.text
+          'password': _passwordController.text,
         },
       );
       final token = response.data['token'];
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', token);
-      if(context.mounted){
+      final userId = response.data['userId'];
+
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      await authProvider.login(token, userId); // ✅ сохраняем и в SharedPreferences, и в AuthProvider
+
+      if (context.mounted) {
         context.go("/home");
       }
-    }catch (e){
-      print("Failed ${e}");
+    } catch (e) {
+      print("Login failed: $e");
     }
   }
 
