@@ -9,7 +9,7 @@ import '../features/profile/presentation/profile_screen.dart';
 import '../core/services/auth_provider.dart';
 import '../features/home/presentation/home_screen.dart';
 import '../features/auth/presentation/userInfo_screen.dart';
-
+import '../features/progress/presentation/progress_page.dart';
 class GoRouterRefreshNotifier extends ChangeNotifier {
   GoRouterRefreshNotifier(AuthProvider authProvider) {
     authProvider.addListener(notifyListeners);
@@ -36,7 +36,7 @@ GoRouter createRouter(AuthProvider authProvider) {
           return const VocabScreen();
         },
       ),
-
+      GoRoute(path: '/progress', builder: (context, state) { return const ProgressScreen();},),
 
       GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
       GoRoute(
